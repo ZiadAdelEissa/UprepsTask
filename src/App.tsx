@@ -1,7 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { User } from "./types/user"
 import UserTable from "./components/UserTable"
 import UserForm from "./components/UserForm"
+import SearchBar from "./components/SearchBar"
+import Sidebar from "./components/Sidebar"
+import Topbar from "./components/Topbar"
 
 const initialUsers: User[] = [
   { id: 1, name: "ziad", email: "ziad@example.com", role: "admin" },
@@ -12,6 +15,8 @@ function App() {
   const [users, setUsers] = useState<User[]>(initialUsers)
   const [editingUser, setEditingUser] = useState<User | undefined>()
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
   const addUser = (user: Omit<User, "id">) => {
     const newUser = { ...user, id: Date.now() }
@@ -39,56 +44,93 @@ function App() {
     setIsFormOpen(true)
   }
 
+  const toggleDarkMode = () => {
+    console.log('Toggle dark mode clicked, current state:', isDarkMode)
+    setIsDarkMode(!isDarkMode)
+    console.log('New dark mode state will be:', !isDarkMode)
+  }
+
+  // Apply dark mode class to document root
+  useEffect(() => {
+    console.log('useEffect triggered, isDarkMode:', isDarkMode)
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark')
+      console.log('Added dark class to document')
+    } else {
+      document.documentElement.classList.remove('dark')
+      console.log('Removed dark class from document')
+    }
+    console.log('Document classes:', document.documentElement.className)
+  }, [isDarkMode])
+
+  // Filter users based on search term
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-light text-slate-800 dark:text-slate-100 mb-2">
-                User Management
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400 text-sm">
-                Manage your team members and their roles
-              </p>
-            </div>
-            <button
-              onClick={handleAdd}
-              className="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white bg-slate-800 dark:bg-slate-700 rounded-lg hover:bg-slate-900 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 transition-all duration-200 shadow-sm hover:shadow-md"
-            >
-              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Add User
-            </button>
-          </div>
-        </div>
-        <div className="">
+    <div className="min-h-screen">
+      <div className="flex">
+        {/* Sidebar */}
+        <Sidebar />
+        
+        {/* Main Content Area */}
+        <div className="flex-1 md:ml-64">
+          {/* Topbar */}
+          <Topbar 
+            onAdd={handleAdd}
+            isDarkMode={isDarkMode}
+            toggleDarkMode={toggleDarkMode}
+          />
           
-        </div>
+          {/* Main Content */}
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
+            <div className="max-w-7xl mx-auto">
+              {/* Header */}
+              <div className="mb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h1 className="text-3xl font-light text-slate-800 dark:text-slate-100 mb-2">
+                      User Management
+                    </h1>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm">
+                      Manage your team members and their roles
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Search Bar */}
+                <div className="mb-6">
+                  <SearchBar search={searchTerm} setSearch={setSearchTerm} />
+                </div>
+              </div>
 
-        {/* Main Content */}
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <UserTable users={users} onEdit={handleEdit} onDelete={deleteUser} />
-        </div>
-
-        {/* Modal */}
-        {isFormOpen && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-            <div className="animate-in zoom-in-95 duration-200">
-              <UserForm
-                user={editingUser}
-                onSubmit={editingUser ? updateUser : addUser}
-                onCancel={() => {
-                  setIsFormOpen(false)
-                  setEditingUser(undefined)
-                }}
-              />
+              {/* Users Table */}
+              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <UserTable users={filteredUsers} onEdit={handleEdit} onDelete={deleteUser} />
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Modal */}
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="animate-in zoom-in-95 duration-200">
+            <UserForm
+              user={editingUser}
+              onSubmit={editingUser ? updateUser : addUser}
+              onCancel={() => {
+                setIsFormOpen(false)
+                setEditingUser(undefined)
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,3 +1,6 @@
 @import "tailwindcss";
 
+/* Tailwind v4 custom dark mode variant */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Custom styles can go here */
