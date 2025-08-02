@@ -4,8 +4,8 @@ import UserTable from "./components/UserTable"
 import UserForm from "./components/UserForm"
 
 const initialUsers: User[] = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "admin" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "editor" },
+  { id: 1, name: "ziad", email: "ziad@example.com", role: "admin" },
+  { id: 2, name: "tarek ", email: "tarek@example.com", role: "user" },
 ]
 
 function App() {
@@ -63,6 +63,9 @@ function App() {
               Add User
             </button>
           </div>
+        </div>
+        <div className="">
+          
         </div>
 
         {/* Main Content */}

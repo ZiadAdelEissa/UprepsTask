@@ -145,8 +145,8 @@ const UserForm: React.FC<UserFormProps> = ({ user, onSubmit, onCancel }) => {
             } text-slate-900 dark:text-slate-100`}
           >
             <option value="">Select a role</option>
-            <option value="admin">Administrator</option>
-            <option value="editor">Editor</option>
+            <option value="admin">admin</option>
+            <option value="user">user</option>
             <option value="viewer">Viewer</option>
           </select>
           {errors.role && (

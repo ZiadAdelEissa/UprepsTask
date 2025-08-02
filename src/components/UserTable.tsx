@@ -84,7 +84,7 @@ export default function UserTable({ users, onEdit, onDelete }: Props) {
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     user.role === 'admin' 
                       ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300'
-                      : user.role === 'editor'
+                      : user.role === 'user'
                       ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
                       : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300'
                   }`}>
